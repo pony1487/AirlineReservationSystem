@@ -23,7 +23,7 @@ public class PlaneRepository {
             @Override
             public Plane mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-                return new JetPlane(rs.getInt("idplane"),
+                return new JetPlane(rs.getInt("plane_id"),
                         rs.getString("model"),
                         rs.getInt("capacity"),
                         rs.getString("engine_type"),
