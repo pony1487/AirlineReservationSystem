@@ -12,13 +12,7 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    /*
-    Just a dummy method to test out Transactional
-     */
-    @Transactional
-    public void addOneCustomer() {
-        var customer = new Customer("Rian", "rian@example.com");
-        customerRepository.addCustomer(customer);
-        throw new RuntimeException("Bad Mojo");
+    public Customer getCustomer(int customerId){
+        return customerRepository.getCustomerById(customerId);
     }
 }
