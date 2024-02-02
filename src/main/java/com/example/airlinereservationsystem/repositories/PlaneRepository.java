@@ -26,6 +26,7 @@ public class PlaneRepository {
                 return new JetPlane(rs.getInt("plane_id"),
                         rs.getString("model"),
                         rs.getInt("capacity"),
+                        rs.getInt("seats_reserved"),
                         rs.getString("engine_type"),
                         rs.getString("owner"));
             }
