@@ -1,20 +1,24 @@
 package com.example.airlinereservationsystem.model;
 
-public class Customer {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+@Entity
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customerId;
 
-    private final String name;
+    private String name;
 
-    private final String email;
+    private String email;
+
+    public Customer() {}
 
     public Customer(int customerId, String name, String email) {
         this.customerId = customerId;
-        this.name = name;
-        this.email = email;
-    }
-
-    public Customer(String name, String email) {
         this.name = name;
         this.email = email;
     }
