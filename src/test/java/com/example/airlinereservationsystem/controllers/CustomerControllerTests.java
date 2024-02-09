@@ -1,4 +1,4 @@
-package com.example.airlinereservationsystem;
+package com.example.airlinereservationsystem.controllers;
 
 import com.example.airlinereservationsystem.model.Customer;
 import com.example.airlinereservationsystem.repositories.CustomerRepository;
@@ -12,6 +12,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CustomerIntegrationTests {
+public class CustomerControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -32,7 +34,7 @@ public class CustomerIntegrationTests {
     @WithMockUser(username="apiUser",roles="ADMIN")
     public void getCustomerTest() throws Exception {
         Customer customer = new Customer(1, "Bill", "bill@example.com");
-        given(mockCustomerRepository.findCustomerById(1)).willReturn(customer);
+        given(mockCustomerRepository.findCustomerById(1)).willReturn(Optional.of(customer));
 
         mockMvc.perform(get("/customer/{id}", 1))
                 .andExpect(status().isOk())

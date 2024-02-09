@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/flight")
 public class FlightController {
@@ -18,6 +20,7 @@ public class FlightController {
 
     @GetMapping("/{id}")
     public Flight getFlight(@PathVariable("id") int flightId) {
-        return flightService.getFlightById(flightId);
+        Optional<Flight> flightOptional = flightService.getFlightById(flightId);
+        return flightOptional.get();
     }
 }

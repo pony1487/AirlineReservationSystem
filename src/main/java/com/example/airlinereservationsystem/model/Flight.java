@@ -21,6 +21,18 @@ public class Flight {
     // TODO this is a foreign key
     private int planeId;
 
+    public Flight(int flightId, String flightDescription, String startAirport, String endAirport, int planeId) {
+        this.flightId = flightId;
+        this.flightDescription = flightDescription;
+        this.startAirport = startAirport;
+        this.endAirport = endAirport;
+        this.planeId = planeId;
+    }
+
+    public Flight() {
+
+    }
+
     public int getFlightId() {
         return flightId;
     }

@@ -1,35 +1,27 @@
 package com.example.airlinereservationsystem.repositories;
 
-import com.example.airlinereservationsystem.model.JetPlane;
 import com.example.airlinereservationsystem.model.Plane;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class PlaneRepository {
+public interface PlaneRepository extends JpaRepository<Plane, Integer> {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    @Query("SELECT p FROM Plane p WHERE p.planeId=:id")
+    public Optional<Plane> findPlaneById(int id);
 
-    public List<Plane> getPlanes() {
-        String sql = "SELECT * FROM plane";
-        return jdbcTemplate.query(sql, new RowMapper<Plane>() {
-            @Override
-            public Plane mapRow(ResultSet rs, int rowNum) throws SQLException {
+    @Modifying
+    @Transactional
+    @Query("Update Plane p SET p.seatsReserved = p.seatsReserved + 1 WHERE p.planeId=:id")
+    public void incrementSeatsReserved(int id);
 
-                return new JetPlane(rs.getInt("plane_id"),
-                        rs.getString("model"),
-                        rs.getInt("capacity"),
-                        rs.getInt("seats_reserved"),
-                        rs.getString("engine_type"),
-                        rs.getString("owner"));
-            }
-        });
-    }
+    @Modifying
+    @Transactional
+    @Query("Update Plane p SET p.seatsReserved = 0 WHERE p.planeId=:id")
+    public void resetSeatsReserved(int id);
 }

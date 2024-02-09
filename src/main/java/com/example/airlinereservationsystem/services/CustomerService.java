@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -18,7 +19,7 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public Customer getCustomerById(int customerId){
+    public Optional<Customer> getCustomerById(int customerId){
         return customerRepository.findCustomerById(customerId);
     }
 

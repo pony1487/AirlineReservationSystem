@@ -1,4 +1,4 @@
-package com.example.airlinereservationsystem;
+package com.example.airlinereservationsystem.services;
 
 import com.example.airlinereservationsystem.model.Customer;
 import com.example.airlinereservationsystem.repositories.CustomerRepository;
@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static junit.framework.TestCase.*;
 import static org.mockito.BDDMockito.given;
@@ -38,12 +39,16 @@ public class CustomerServiceTests {
     @Test
     public void customerReturnedFromRepository() {
         Customer customer = new Customer(1, "bob", "bob@example.com");
-        given(mockCustomerRepository.findCustomerById(1)).willReturn(customer);
 
-        Customer res = customerService.getCustomerById(1);
+        given(mockCustomerRepository.findCustomerById(1)).willReturn(Optional.of(customer));
 
-        assertEquals(customer.getCustomerId(), res.getCustomerId());
-        assertEquals(customer.getName(), res.getName());
-        assertEquals(customer.getEmail(), res.getEmail());
+        Optional<Customer> res = customerService.getCustomerById(1);
+
+        assertTrue(res.isPresent());
+        Customer customerFromDB = res.get();
+
+        assertEquals(customer.getCustomerId(), customerFromDB.getCustomerId());
+        assertEquals(customer.getName(), customerFromDB.getName());
+        assertEquals(customer.getEmail(), customerFromDB.getEmail());
     }
 }
