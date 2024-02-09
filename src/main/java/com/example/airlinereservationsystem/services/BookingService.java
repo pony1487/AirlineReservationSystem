@@ -58,6 +58,15 @@ public class BookingService {
             throw new IllegalStateException(errorMessage);
         }
 
+        Optional<Booking> bookingOptional = bookingRepository.customerIsAlreadyBookedOnFlight(customerId, flightId);
+        if (bookingOptional.isPresent()) {
+            Booking existingBooking = bookingOptional.get();
+            String errorMessage = "Customer: " + customerId + " is already booked on Flight: " + flightId + " with Booking: " + existingBooking.getBookingId();
+            logger.error(errorMessage);
+            // TODO better handling.
+            throw new IllegalStateException(errorMessage);
+        }
+
         return makeBooking(booking, planeId);
     }
 
