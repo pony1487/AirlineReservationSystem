@@ -2,7 +2,6 @@ package com.example.airlinereservationsystem.services;
 
 import com.example.airlinereservationsystem.model.Customer;
 import com.example.airlinereservationsystem.repositories.CustomerRepository;
-import com.example.airlinereservationsystem.services.CustomerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

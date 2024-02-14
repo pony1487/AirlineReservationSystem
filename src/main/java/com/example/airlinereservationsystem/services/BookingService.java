@@ -1,6 +1,10 @@
 package com.example.airlinereservationsystem.services;
 
 import com.example.airlinereservationsystem.Reporting.BookingMessageProducer;
+import com.example.airlinereservationsystem.exception.CustomerAlreadyBookedException;
+import com.example.airlinereservationsystem.exception.CustomerNotRegisteredException;
+import com.example.airlinereservationsystem.exception.FlightDoesNotExistException;
+import com.example.airlinereservationsystem.exception.PlaneIsFullException;
 import com.example.airlinereservationsystem.model.Booking;
 import com.example.airlinereservationsystem.model.Customer;
 import com.example.airlinereservationsystem.model.Flight;
@@ -48,44 +52,23 @@ public class BookingService {
 
         Optional<Customer> customerOptional = customerService.getCustomerById(customerId);
         if (customerOptional.isEmpty()) {
-            String errorMessage = "Customer: " + customerId + " is not registered.";
-            String kafkaMessage = errorMessageHeader + errorMessage;
-            logger.error(errorMessage);
-            bookingMessageProducer.sendMessage(topicName, kafkaMessage);
-            // TODO better handling.
-            throw new IllegalStateException(errorMessage);
+            throwExceptionIfCustomerNotRegistered(customerId);
         }
 
         Optional<Flight> flightOptional = flightService.getFlightById(flightId);
         if (flightOptional.isEmpty()) {
-            String errorMessage = "Flight: " + flightId + " does not exist.";
-            String kafkaMessage = errorMessageHeader + errorMessage;
-            logger.error(errorMessage);
-            bookingMessageProducer.sendMessage(topicName, kafkaMessage);
-            // TODO better handling.
-            throw new IllegalStateException(errorMessage);
+            throwExceptionIfFlightDoesNotExist(flightId);
         }
 
         Flight flight = flightOptional.get();
         int planeId = flight.getPlaneId();
         if (!planeService.planeHasRoom(planeId)) {
-            String errorMessage = "Plane: " + flightId + " is full.";
-            String kafkaMessage = errorMessageHeader + errorMessage;
-            logger.error(errorMessage);
-            bookingMessageProducer.sendMessage(topicName, kafkaMessage);
-            // TODO better handling.
-            throw new IllegalStateException(errorMessage);
+            throwExceptionIfPlaneIsFull(planeId);
         }
 
         Optional<Booking> bookingOptional = bookingRepository.customerIsAlreadyBookedOnFlight(customerId, flightId);
         if (bookingOptional.isPresent()) {
-            Booking existingBooking = bookingOptional.get();
-            String errorMessage = "Customer: " + customerId + " is already booked on Flight: " + flightId + " with Booking: " + existingBooking.getBookingId();
-            String kafkaMessage = errorMessageHeader + errorMessage;
-            logger.error(errorMessage);
-            bookingMessageProducer.sendMessage(topicName, kafkaMessage);
-            // TODO better handling.
-            throw new IllegalStateException(errorMessage);
+            throwExceptionIfCustomerIsAlreadyBooked(bookingOptional, customerId, flightId);
         }
 
         Booking completedBooking = makeBooking(booking, planeId);
@@ -100,5 +83,43 @@ public class BookingService {
         planeService.incrementSeatsReserved(planeId);
 
         return bookingRepository.save(booking);
+    }
+
+    private void throwExceptionIfCustomerNotRegistered(int customerId) {
+        String errorMessage = "Customer: " + customerId + " is not registered.";
+        String kafkaMessage = createKafkaMessage(errorMessage);
+        logger.error(errorMessage);
+        bookingMessageProducer.sendMessage(topicName, kafkaMessage);
+        throw new CustomerNotRegisteredException(errorMessage);
+    }
+
+    private void throwExceptionIfFlightDoesNotExist(int flightId) {
+        String errorMessage = "Flight: " + flightId + " does not exist.";
+        String kafkaMessage = createKafkaMessage(errorMessage);
+        logger.error(errorMessage);
+        bookingMessageProducer.sendMessage(topicName, kafkaMessage);
+        throw new FlightDoesNotExistException(errorMessage);
+    }
+
+    private void throwExceptionIfPlaneIsFull(int planeId) {
+        String errorMessage = "Plane: " + planeId + " is full.";
+        String kafkaMessage = createKafkaMessage(errorMessage);
+        logger.error(errorMessage);
+        bookingMessageProducer.sendMessage(topicName, kafkaMessage);
+        throw new PlaneIsFullException(errorMessage);
+    }
+
+    private void throwExceptionIfCustomerIsAlreadyBooked(Optional<Booking> bookingOptional, int customerId, int flightId) {
+        Booking existingBooking = bookingOptional.get();
+        String errorMessage = "Customer: " + customerId + " is already booked on Flight: " + flightId + " with Booking: " + existingBooking.getBookingId();
+        String kafkaMessage = createKafkaMessage(errorMessage);
+        logger.error(errorMessage);
+        bookingMessageProducer.sendMessage(topicName, kafkaMessage);
+        throw new CustomerAlreadyBookedException(errorMessage);
+    }
+
+
+    private String createKafkaMessage(String errorMessage) {
+        return errorMessageHeader + errorMessage;
     }
 }

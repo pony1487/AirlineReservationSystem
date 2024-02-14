@@ -1,5 +1,9 @@
 package com.example.airlinereservationsystem.services;
 
+import com.example.airlinereservationsystem.exception.CustomerAlreadyBookedException;
+import com.example.airlinereservationsystem.exception.CustomerNotRegisteredException;
+import com.example.airlinereservationsystem.exception.FlightDoesNotExistException;
+import com.example.airlinereservationsystem.exception.PlaneIsFullException;
 import com.example.airlinereservationsystem.model.Booking;
 import com.example.airlinereservationsystem.model.Customer;
 import com.example.airlinereservationsystem.model.Flight;
@@ -8,7 +12,6 @@ import com.example.airlinereservationsystem.repositories.BookingRepository;
 import com.example.airlinereservationsystem.repositories.CustomerRepository;
 import com.example.airlinereservationsystem.repositories.FlightRepository;
 import com.example.airlinereservationsystem.repositories.PlaneRepository;
-import com.example.airlinereservationsystem.services.CustomerService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -18,8 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static junit.framework.TestCase.*;
@@ -83,7 +84,7 @@ public class BookingServiceTests {
         int bookingId = 1;
         Booking booking = new Booking(bookingId, flightId, customerId);
 
-        expectedEx.expect(IllegalStateException.class);
+        expectedEx.expect(CustomerNotRegisteredException.class);
         expectedEx.expectMessage("Customer: " + customerId + " is not registered.");
 
         bookingService.addBooking(booking);
@@ -101,7 +102,7 @@ public class BookingServiceTests {
         given(mockCustomerRepository.findCustomerById(1)).willReturn(Optional.of(customer));
 
 
-        expectedEx.expect(IllegalStateException.class);
+        expectedEx.expect(FlightDoesNotExistException.class);
         expectedEx.expectMessage("Flight: " + flightId + " does not exist.");
         bookingService.addBooking(booking);
     }
@@ -122,7 +123,7 @@ public class BookingServiceTests {
         given(mockFlightRepository.findFlightById(flightId)).willReturn(Optional.of(flight));
         given(mockPlaneRepository.findPlaneById(planeId)).willReturn(Optional.of(plane));
 
-        expectedEx.expect(IllegalStateException.class);
+        expectedEx.expect(PlaneIsFullException.class);
         expectedEx.expectMessage("Plane: " + planeId + " is full.");
 
         bookingService.addBooking(booking);
@@ -145,7 +146,7 @@ public class BookingServiceTests {
         given(mockPlaneRepository.findPlaneById(planeId)).willReturn(Optional.of(plane));
         given(mockBookingRepository.customerIsAlreadyBookedOnFlight(customerId, flightId)).willReturn(Optional.of(booking));
 
-        expectedEx.expect(IllegalStateException.class);
+        expectedEx.expect(CustomerAlreadyBookedException.class);
         expectedEx.expectMessage("Customer: " + customerId + " is already booked on Flight: " + flightId + " with Booking: " + bookingId);
 
         bookingService.addBooking(booking);
