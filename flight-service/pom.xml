@@ -5,36 +5,29 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-
     <groupId>com.example</groupId>
-    <artifactId>AirlineReservationSystem</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>AirlineReservationSystem</name>
-    <description>AirlineReservationSystem</description>
-
-    <modules>
-        <module>customer-service</module>
-        <module>booking-service</module>
-        <module>plane-service</module>
-        <module>flight-service</module>
-    </modules>
-
+    <artifactId>flight-service</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>flight-service</name>
+    <description>flight-service</description>
     <properties>
         <java.version>17</java.version>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-config</artifactId>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
