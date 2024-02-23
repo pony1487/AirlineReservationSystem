@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+//    TODO re-add if you use the basic security
+//import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -31,7 +32,8 @@ public class CustomerControllerTests {
     private CustomerRepository mockCustomerRepository;
 
     @Test
-    @WithMockUser(username="apiUser",roles="ADMIN")
+//    TODO re-add if you use the basic security
+//    @WithMockUser(username="apiUser",roles="ADMIN")
     public void getCustomerTest() throws Exception {
         Customer customer = new Customer(1, "Bill", "bill@example.com");
         given(mockCustomerRepository.findCustomerById(1)).willReturn(Optional.of(customer));
