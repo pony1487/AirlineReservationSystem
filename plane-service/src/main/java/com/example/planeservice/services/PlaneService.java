@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,7 +19,9 @@ public class PlaneService {
 
     Logger logger = LoggerFactory.getLogger(PlaneService.class);
 
-
+    public Optional<Plane> getPlane(int planeId){
+        return planeRepository.findPlaneById(planeId);
+    }
     public boolean planeHasRoom(int planeId) {
         logger.info("Checking if plane: " + planeId + " has room");
         Optional<Plane> planeOptional = planeRepository.findPlaneById(planeId);
@@ -31,6 +35,7 @@ public class PlaneService {
         }
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void incrementSeatsReserved(int planeId){
         logger.info("Incrementing seats reserved for plane: " + planeId);
         Optional<Plane> planeOptional = planeRepository.findPlaneById(planeId);

@@ -27,8 +27,8 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 public class BookingServiceTests {
 
-//    @MockBean
-//    private BookingRepository mockBookingRepository;
+    @MockBean
+    private BookingRepository mockBookingRepository;
 //
 //    @MockBean
 //    private FlightRepository mockFlightRepository;
@@ -39,11 +39,11 @@ public class BookingServiceTests {
 //    @MockBean
 //    private PlaneRepository mockPlaneRepository;
 //
-//    @Autowired
-//    private BookingService bookingService;
-//
-//    @Rule
-//    public ExpectedException expectedEx = ExpectedException.none();
+    @Autowired
+    private BookingService bookingService;
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 //
 //    @Test
 //    public void addBookingTest() {
@@ -73,18 +73,18 @@ public class BookingServiceTests {
 //        assertEquals(booking.getCustomerId(), savedBooking.getCustomerId());
 //    }
 //
-//    @Test
-//    public void addBookingCustomerNotRegisteredTest() {
-//        int customerId = 1;
-//        int flightId = 1;
-//        int bookingId = 1;
-//        Booking booking = new Booking(bookingId, flightId, customerId);
-//
-//        expectedEx.expect(CustomerNotRegisteredException.class);
-//        expectedEx.expectMessage("Customer: " + customerId + " is not registered.");
-//
-//        bookingService.addBooking(booking);
-//    }
+    @Test
+    public void addBookingCustomerNotRegisteredTest() {
+        int customerId = 1;
+        int flightId = 1;
+        int bookingId = 1;
+        Booking booking = new Booking(bookingId, flightId, customerId);
+
+        expectedEx.expect(CustomerNotRegisteredException.class);
+        expectedEx.expectMessage("Customer: " + customerId + " is not registered.");
+
+        bookingService.addBooking(booking);
+    }
 //
 //    @Test
 //    public void addBookingFlightDoesNotExistTest() {

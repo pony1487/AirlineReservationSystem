@@ -17,7 +17,7 @@ public class BookingController {
 
     @PostMapping()
     public void addBooking(@RequestBody Booking booking) {
-//        bookingService.addBooking(booking);
+        bookingService.addBooking(booking);
     }
 
 
