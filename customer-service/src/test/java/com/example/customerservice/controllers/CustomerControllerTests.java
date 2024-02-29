@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-//    TODO re-add if you use the basic security
-//import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,16 +30,24 @@ public class CustomerControllerTests {
     private CustomerRepository mockCustomerRepository;
 
     @Test
-//    TODO re-add if you use the basic security
-//    @WithMockUser(username="apiUser",roles="ADMIN")
     public void getCustomerTest() throws Exception {
-        Customer customer = new Customer(1, "Bill", "bill@example.com");
+        int id = 1;
+        Customer customer = new Customer(id, "Bill", "bill@example.com");
         given(mockCustomerRepository.findCustomerById(1)).willReturn(Optional.of(customer));
 
-        mockMvc.perform(get("/customer/{id}", 1))
+        mockMvc.perform(get("/customer/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Bill"))
                 .andExpect(jsonPath("$.email").value("bill@example.com"));
+    }
+
+    @Test
+    public void getCustomerTestNotFound() throws Exception {
+        int id = 1;
+        given(mockCustomerRepository.findCustomerById(id)).willReturn(Optional.empty());
+
+        mockMvc.perform(get("/customer/{id}", id))
+                .andExpect(status().isNotFound());
     }
 
 }

@@ -37,11 +37,6 @@ public class CustomerController {
         return new ResponseEntity<>(customerOptional.get(), HttpStatus.OK);
     }
 
-    @GetMapping("/name/{name}")
-    public Customer getCustomerByName(@PathVariable("name") String name) {
-        return customerService.getCustomerByName(name);
-    }
-
     @GetMapping("/all")
     public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();

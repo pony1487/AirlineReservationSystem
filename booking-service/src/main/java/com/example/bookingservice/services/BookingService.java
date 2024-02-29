@@ -23,6 +23,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.function.Predicate.not;
+
 @Service
 public class BookingService {
 
@@ -49,17 +51,15 @@ public class BookingService {
             throw new CustomerNotRegisteredException(errorMessage);
         }
 
-        if (!flightExists(flightId)) {
+        Optional<String> optionalFlightBody = getFlightBody(flightId);
+        if (optionalFlightBody.isEmpty()) {
             String errorMessage = String.format("Flight: %s does not exist.", flightId);
             throw new FlightDoesNotExistException(errorMessage);
         }
-
-        // TODO extra API call that could be removed with refactoring above
-        String flightEndpoint = String.format("%s/%s", flightServiceEndpoint, flightId);
-        ResponseEntity<String> flightResponse = restTemplate.getForEntity(flightEndpoint, String.class);
-
+        
+        String flightBody = optionalFlightBody.get();
         JsonParser springParser = JsonParserFactory.getJsonParser();
-        Map< String, Object > map = springParser.parseMap(flightResponse.getBody());
+        Map< String, Object > map = springParser.parseMap(flightBody);
         int planeId = (int) map.get("planeId");
 
         if (!planeIsFull(planeId)) {
@@ -92,19 +92,22 @@ public class BookingService {
         return true;
     }
 
-    private boolean flightExists(int flightId){
+    private Optional<String> getFlightBody(int flightId){
         String flightEndpoint = String.format("%s/%s", flightServiceEndpoint, flightId);
+        String flightBody = null;
         try {
-            HttpEntity<Integer> entity = new HttpEntity<>(flightId);
-            ResponseEntity<String> flightResponse = restTemplate.exchange(flightEndpoint, HttpMethod.HEAD, entity, String.class);
+            ResponseEntity<String> flightResponse = restTemplate.getForEntity(flightEndpoint, String.class);
             logger.info("Flight: " + flightId + " exists, continuing.");
+
+            flightBody = flightResponse.getBody();
+            
         } catch (HttpStatusCodeException e) {
             if (e.getStatusCode().value() == HttpStatus.NOT_FOUND.value()) {
                 logger.error("Flight: " + flightId + " does not exist.");
-                return false;
+                return Optional.empty();
             }
         }
-        return true;
+        return Optional.ofNullable(flightBody).filter(not(String::isEmpty));
     }
 
     private boolean planeIsFull(int planeId){

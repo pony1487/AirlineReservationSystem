@@ -51,4 +51,14 @@ public class CustomerServiceTests {
         assertEquals(customer.getName(), customerFromDB.getName());
         assertEquals(customer.getEmail(), customerFromDB.getEmail());
     }
+
+    @Test
+    public void saveCustomerTest() {
+        Customer customer = new Customer(1, "bob", "bob@example.com");
+        given(mockCustomerRepository.save(customer)).willReturn(customer);
+
+        Customer savedCustomer = customerService.addCustomer(customer);
+
+        assertEquals(savedCustomer, customer);
+    }
 }

@@ -22,20 +22,11 @@ public class CustomerService {
         return customerRepository.findCustomerById(customerId);
     }
 
-    public Customer getCustomerByName(String name){
-        return customerRepository.findCustomerByName(name);
-    }
-
     public Customer addCustomer(Customer customer){
         return customerRepository.save(customer);
     }
 
     public List<Customer> getAllCustomers(){
         return customerRepository.findAll(Sort.by("customerId").descending());
-    }
-
-    public List<Customer> getAllCustomersPaginated(int page){
-        Sort sortBy = Sort.by("customerId").descending();
-        return customerRepository.findAll(PageRequest.of(page, pageSize, sortBy)).getContent();
     }
 }
